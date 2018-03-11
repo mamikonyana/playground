@@ -15,8 +15,8 @@ data {
 }
 
 transformed data {
-  cov_matrix[D] invOmega0;
-  invOmega0 <- inverse(Omega0);
+    cov_matrix[D] invOmega0;
+    invOmega0 <- inverse(Omega0);
 }
 
 parameters {

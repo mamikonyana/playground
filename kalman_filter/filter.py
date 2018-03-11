@@ -35,7 +35,7 @@ class KalmanFilter:
     self.v_history = []
     self.vvT_history = []
 
-  def step(self, obs, delta_t):
+  def step(self, obs, delta_t=1.):
     print('step...')
     F = np.array([[1, delta_t], [0, 1]])
     # G = np.array([.5 * delta_t ** 2, delta_t])
@@ -79,21 +79,24 @@ def _sandwich(A, B):
 
 
 def main(args):
-  df = pd.read_csv('/Users/arsen/Workspace/macrobase/bench/workflows/moving_gaussian_nov29_grid/11-29-15_32_52/speed=0.00100.csv')
+  # df = pd.read_csv('/Users/arsen/Workspace/macrobase/bench/workflows/moving_gaussian_nov29_grid/11-29-15_32_52/speed=0.00100.csv')
+  df = pd.read_csv('/Users/arsen/Workspace/macrobase/contrib/src/test/resources/data/noisy_2d.csv.gz')
+  # df = np.cumsum(np.random.uniform(-0.5, 0.5, (10000, 1)))
   N = df.shape[0]
   step = args.step
   ll = []
   for i in range(0, N, step):
     ll.append(np.mean(df[i:i + step]))
   print('var', np.var(ll))
-  f = KalmanFilter(np.array([[0., 0.],
-                             [0., 0.]]))
+  f = KalmanFilter(np.array([[1., 1.],
+                             [0., 1.]]))
   # filtered = [f.step([l], step)[0] for l in ll]
   filtered = [f.step([l], 1)[0] for l in ll]
+
   print('filtered', filtered)
   print('filtered', next(zip(*filtered)))
-  plt.plot(range(1, len(ll) + 1), next(zip(*filtered)), color='red')
   plt.plot(range(1, len(ll) + 1), next(zip(*ll)), color='blue')
+  plt.plot(range(1, len(ll) + 1), next(zip(*filtered)), color='red')
   plt.show()
 
 
